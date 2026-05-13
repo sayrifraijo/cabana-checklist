@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cabaña — Checklist de Diseño</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #f5f1eb;
+    --bg2:     #eee9e1;
+    --bg3:     #e8e2d8;
+    --bg4:     #ffffff;
+    --border:  #d8d0c4;
+    --border2: #c8bfb0;
+    --accent:  #8a6a40;
+    --accent2: #b08850;
+    --text:    #2a2018;
+    --text2:   #4a3a28;
+    --text3:   #8a7a68;
+    --text4:   #b0a090;
+    --shadow:  0 1px 4px rgba(80,60,30,.09);
+    --shadow2: 0 2px 12px rgba(80,60,30,.12);
+
+    /* status colors */
+    --s-none:       #f0ece6; --sc-none:       #9a8a78; --sb-none:       #cfc5b8;
+    --s-disenado:   #ddeaf8; --sc-disenado:   #2e6aaa; --sb-disenado:   #80aedd;
+    --s-porpagar:   #fff0d8; --sc-porpagar:   #a06010; --sb-porpagar:   #d4a040;
+    --s-produccion: #fde8c8; --sc-produccion: #b05010; --sb-produccion: #e09040;
+    --s-en_sitio:   #edf4ff; --sc-en_sitio:   #2050a0; --sb-en_sitio:   #6090d8;
+    --s-instalacion:#f0e8ff; --sc-instalacion:#6030a0; --sb-instalacion:#a070d0;
+    --s-terminado:  #d8f4e4; --sc-terminado:  #1a7a40; --sb-terminado:  #48c880;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Sans 3', sans-serif; min-height: 100vh; font-size: 14px; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 100px; }
+
+  /* Header */
+  .hdr { text-align: center; margin-bottom: 30px; padding-bottom: 22px; border-bottom: 2px solid var(--border); }
+  .hdr-eye { font-size: 10px; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; color: var(--accent2); margin-bottom: 7px; }
+  .hdr-title { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--text); }
+  .hdr-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+  /* Progress card */
+  .prog-card { background: var(--bg4); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 18px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; box-shadow: var(--shadow2); }
+  .ring-wrap { position: relative; width: 66px; height: 66px; flex-shrink: 0; }
+  .ring-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--accent); }
+  .prog-main { flex: 1; min-width: 130px; }
+  .prog-main h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--text); margin-bottom: 2px; }
+  .prog-main p { font-size: 11px; color: var(--text3); }
+  .prog-stats { display: flex; gap: 14px; border-left: 2px solid var(--border); padding-left: 18px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-n { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--accent); }
+  .stat-l { font-size: 9px; color: var(--text4); letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
+
+  /* Legend */
+  .status-legend { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .leg-pill { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text3); padding: 3px 9px; border-radius: 12px; background: var(--bg4); border: 1px solid var(--border); }
+  .leg-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Filters */
+  .ctrls { display: flex; gap: 7px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+  .fbtn { background: var(--bg4); border: 1px solid var(--border); color: var(--text3); padding: 5px 13px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all 0.2s; font-family: 'Source Sans 3', sans-serif; box-shadow: var(--shadow); }
+  .fbtn:hover { border-color: var(--accent2); color: var(--accent); }
+  .fbtn.on { border-color: var(--accent); color: var(--accent); background: #f8f0e4; font-weight: 600; }
+  .tbtn { background: none; border: none; color: var(--text4); font-size: 11px; cursor: pointer; padding: 4px 6px; text-decoration: underline; font-family: 'Source Sans 3', sans-serif; transition: color 0.2s; margin-left: auto; }
+  .tbtn:hover { color: var(--accent); }
+
+  /* Section */
+  .sec { margin-bottom: 10px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+  .sec-hdr { display: flex; align-items: center; padding: 13px 18px; cursor: pointer; background: var(--bg2); gap: 11px; user-select: none; transition: background 0.2s; }
+  .sec-hdr:hover { background: var(--bg3); }
+  .sec-ico { font-size: 13px; color: var(--accent2); width: 16px; text-align: center; flex-shrink: 0; }
+  .sec-ttl { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: var(--text); flex: 1; }
+  .sec-cnt { font-size: 11px; color: var(--text3); white-space: nowrap; }
+  .mini-bar { width: 48px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .mini-fill { height: 100%; background: linear-gradient(90deg,var(--accent),var(--accent2)); border-radius: 2px; transition: width 0.4s; }
+  .chev { font-size: 9px; color: var(--text4); transition: transform 0.25s; flex-shrink: 0; }
+  .chev.open { transform: rotate(180deg); }
+
+  .sec-body { background: var(--bg4); display: none; }
+  .sec-body.open { display: block; }
+
+  /* ── ITEM CARD ── */
+  .item-card {
+    border-bottom: 1px solid var(--bg2);
+    transition: background 0.15s;
+  }
+  .item-card:last-child { border-bottom: none; }
+  .item-card.hidden { display: none !important; }
+
+  /* Top row: status + label */
+  .item-top {
+    display: flex; align-items: flex-start; padding: 12px 16px 10px; gap: 12px;
+  }
+
+  /* Status pill */
+  .status-sel {
+    flex-shrink: 0; border: none; outline: none; cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif; font-size: 10px; font-weight: 600;
+    padding: 4px 9px; border-radius: 12px; transition: all 0.2s;
+    appearance: none; -webkit-appearance: none;
+    min-width: 116px; text-align: center; margin-top: 2px; letter-spacing: 0.3px;
+  }
+  .status-sel.s-none        { background:var(--s-none);        color:var(--sc-none);        border:1.5px solid var(--sb-none); }
+  .status-sel.s-disenado    { background:var(--s-disenado);    color:var(--sc-disenado);    border:1.5px solid var(--sb-disenado); }
+  .status-sel.s-porpagar    { background:var(--s-porpagar);    color:var(--sc-porpagar);    border:1.5px solid var(--sb-porpagar); }
+  .status-sel.s-produccion  { background:var(--s-produccion);  color:var(--sc-produccion);  border:1.5px solid var(--sb-produccion); }
+  .status-sel.s-en_sitio    { background:var(--s-en_sitio);    color:var(--sc-en_sitio);    border:1.5px solid var(--sb-en_sitio); }
+  .status-sel.s-instalacion { background:var(--s-instalacion); color:var(--sc-instalacion); border:1.5px solid var(--sb-instalacion); }
+  .status-sel.s-terminado   { background:var(--s-terminado);   color:var(--sc-terminado);   border:1.5px solid var(--sb-terminado); }
+
+  .item-txt { font-size: 13.5px; color: var(--text2); line-height: 1.45; flex: 1; padding-top: 3px; }
+  .item-txt.done { color: var(--text4); text-decoration: line-through; }
+
+  /* ── INLINE DETAIL ROW ── */
+  /* Always visible below the top row */
+  .item-detail {
+    display: flex; gap: 12px; padding: 0 16px 14px 16px;
+    align-items: flex-start; flex-wrap: wrap;
+  }
+
+  /* Observations */
+  .obs-wrap { flex: 1; min-width: 200px; }
+  .detail-lbl { font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text4); margin-bottom: 4px; }
+  .obs-ta {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text2); font-size: 12.5px;
+    font-family: 'Source Sans 3', sans-serif; font-weight: 300;
+    padding: 7px 10px; resize: none; outline: none;
+    line-height: 1.5; min-height: 38px; overflow: hidden;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .obs-ta::placeholder { color: var(--text4); font-style: italic; }
+  .obs-ta:focus { border-color: var(--accent2); background: var(--bg4); }
+
+  /* Photo */
+  .photo-wrap { flex-shrink: 0; width: 120px; }
+
+  .photo-slot {
+    width: 120px; height: 88px; border: 2px dashed var(--border2);
+    border-radius: 10px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px;
+    cursor: pointer; transition: all 0.2s; background: var(--bg);
+    position: relative; overflow: hidden;
+  }
+  .photo-slot:hover { border-color: var(--accent2); background: #fdf8f0; }
+  .photo-slot.filled { border-style: solid; border-color: var(--border); padding: 0; }
+  .photo-slot input[type=file] { display: none; }
+  .upload-ico { font-size: 18px; color: var(--text4); }
+  .upload-txt { font-size: 9px; color: var(--text4); text-align: center; line-height: 1.3; }
+
+  .photo-img {
+    width: 120px; height: 88px; object-fit: cover;
+    border-radius: 8px; display: none; cursor: pointer;
+  }
+  .photo-img.visible { display: block; }
+
+  .photo-btns { display: none; gap: 4px; margin-top: 4px; }
+  .photo-btns.visible { display: flex; }
+  .pbtn {
+    flex: 1; background: none; border: 1px solid var(--border); color: var(--text3);
+    font-size: 9px; padding: 2px 6px; border-radius: 5px; cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif; transition: all 0.2s; text-align: center;
+  }
+  .pbtn:hover { border-color: var(--accent2); color: var(--accent); }
+  .pbtn.del:hover { border-color: #d04040; color: #b02020; }
+
+  /* Lightbox */
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 1000; align-items: center; justify-content: center; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+  .lightbox-close { position: absolute; top: 20px; right: 28px; color: white; font-size: 32px; cursor: pointer; opacity: .8; line-height: 1; }
+  .lightbox-close:hover { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <p class="hdr-eye">Diseño de Interiores</p>
+    <h1 class="hdr-title">Cabaña</h1>
+    <p class="hdr-sub">Control de avance y decisiones de proyecto</p>
+  </div>
+
+  <!-- Progress -->
+  <div class="prog-card">
+    <div class="ring-wrap">
+      <svg width="66" height="66" style="transform:rotate(-90deg)">
+        <circle cx="33" cy="33" r="27" fill="none" stroke="#e0d8cc" stroke-width="4.5"/>
+        <circle id="cl-ring" cx="33" cy="33" r="27" fill="none" stroke="#b08850" stroke-width="4.5"
+          stroke-dasharray="169.6" stroke-dashoffset="169.6" stroke-linecap="round"
+          style="transition:stroke-dashoffset 0.5s ease"/>
+      </svg>
+      <div class="ring-pct" id="cl-pct">0%</div>
+    </div>
+    <div class="prog-main">
+      <h3 id="cl-done-txt">Cargando…</h3>
+      <p id="cl-pend-txt"></p>
+    </div>
+    <div class="prog-stats">
+      <div class="stat"><div class="stat-n" id="n-terminado">0</div><div class="stat-l">Terminados</div></div>
+      <div class="stat"><div class="stat-n" id="n-instalacion">0</div><div class="stat-l">Instalando</div></div>
+      <div class="stat"><div class="stat-n" id="n-en_sitio">0</div><div class="stat-l">En sitio</div></div>
+      <div class="stat"><div class="stat-n" id="n-produccion">0</div><div class="stat-l">En prod.</div></div>
+      <div class="stat"><div class="stat-n" id="n-none">0</div><div class="stat-l">Sin iniciar</div></div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="status-legend">
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-none)"></div>Sin definir</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-disenado)"></div>Diseñado</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-porpagar)"></div>Por pagar</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-produccion)"></div>En producción</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-en_sitio)"></div>En sitio</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-instalacion)"></div>En instalación</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-terminado)"></div>Terminado</div>
+  </div>
+
+  <!-- Filters -->
+  <div class="ctrls">
+    <button class="fbtn on"  onclick="setFilter('all',this)">Todos</button>
+    <button class="fbtn" onclick="setFilter('none',this)">Sin definir</button>
+    <button class="fbtn" onclick="setFilter('terminado',this)">Terminados</button>
+    <button class="fbtn" onclick="setFilter('con-datos',this)">Con datos</button>
+    <button class="tbtn" onclick="expandAll()">Expandir todo</button>
+    <button class="tbtn" onclick="collapseAll()">Contraer</button>
+  </div>
+
+  <div id="cl-sections"></div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close">×</span>
+  <img id="lightbox-img" src="" alt="Foto">
+</div>
+
+<script>
+const CHECKLIST = [
+  { id:1, icon:"⬢", title:"Carpintería", items:[
+    "Puertas de área","Herrajes y jaladeras de puertas","Cocina","Herrajes y jaladeras de cocina",
+    "Closet principal","Herrajes y jaladeras de closet principal","Mueble de baño principal",
+    "Herrajes y jaladeras de mueble de baño principal","Alacena y pantry","Herrajes y jaladeras de pantry",
+    "Lavandería","Herrajes y jaladeras de lavandería","Mueble de medio baño",
+    "Herrajes y jaladeras de medio baño","Closet de recámara de visitas","Cocineta recámara de visitas",
+    "Escritorio de oratorio","Librero oratorio","Closet de cuarto de servicio",
+  ]},
+  { id:2, icon:"◎", title:"Baños", items:[
+    "Lavabo baño principal","Lavabo medio baño","Lavabo baño de visitas","Lavabo baño de servicio","WCs",
+    "Regaderas y mezcladoras baño principal","Mezcladoras medio baño",
+    "Regaderas y mezcladoras baño de visitas","Regaderas y mezcladoras baño de servicio",
+    "Espejo baño principal","Espejo baño de visitas","Espejo baño de servicio",
+    "Accesorios: toallero, portapapel, ganchos","Cancelería de baño principal",
+    "Cancelería de baño de visitas","Cancelería de baño de servicio",
+  ]},
+  { id:3, icon:"◆", title:"Granito / Cubiertas / Piedra", items:[
+    "Cubierta terraza","Cubierta cocina vino","Cubierta cocina isla",
+    "Salpicadera cocina","Cubierta baño principal","Cubierta medio baño",
+  ]},
+  { id:4, icon:"◉", title:"Iluminación Especial", items:[
+    "Luminaria central sala","Luminaria central comedor","Luminaria central cocina",
+    "Luminaria arbotante cocina","Luminaria central recámara principal",
+    "Luminaria central recámara de visitas","Spots","Apagadores inteligentes","Postes terraza",
+  ]},
+  { id:5, icon:"▣", title:"Mobiliario", items:[
+    "Sala — Sillón","Sala — Mesa de centro","Sala — Mesa lateral","Cocina — Bancos",
+    "Comedor — Mesa","Comedor — Sillas","Rec. Principal — Cama","Rec. Principal — Burós",
+    "Rec. Principal — Desayunador","Rec. Principal — Sillas desayunador",
+    "Rec. Principal — Sillón reclinable","Rec. Principal — Asiento closet",
+    "Rec. Principal — Silla oratorio","Rec. Principal — Silla escritorio",
+    "Rec. Visitas — Cama","Rec. Visitas — Burós","Rec. Visitas — Sillón",
+    "Rec. Servicio — Cama","Rec. Servicio — Buró","Terraza — Mesa","Terraza — Sillas",
+  ]},
+  { id:6, icon:"◈", title:"Textiles y Ambientación", items:[
+    "Cortinas / persianas","Cuadros / arte / accesorios","Plantas naturales o artificiales",
+    "Objetos decorativos clave","Espejos decorativos","Mantas / texturas","Cojines terraza",
+  ]},
+  { id:7, icon:"✦", title:"Detalles Finales", items:[
+    "Topes de puerta","Tapas de registros visibles","Sellos y siliconas en color correcto",
+    "Remates de pintura","Asador",
+  ]},
+];
+
+const STATUSES = [
+  { val:"",           label:"Sin definir" },
+  { val:"disenado",   label:"Diseñado" },
+  { val:"porpagar",   label:"Por pagar" },
+  { val:"produccion", label:"En producción" },
+  { val:"en_sitio",   label:"En sitio" },
+  { val:"instalacion",label:"En instalación" },
+  { val:"terminado",  label:"Terminado" },
+];
+
+const KEY = "cabana_v6";
+let state = { statuses:{}, notes:{}, photos:{} };
+let currentFilter = "all";
+
+function load() {
+  try {
+    const p = JSON.parse(localStorage.getItem(KEY)||'{}');
+    state.statuses = p.statuses||{};
+    state.notes    = p.notes   ||{};
+    state.photos   = p.photos  ||{};
+  } catch {}
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
+}
+function autoResize(el) { el.style.height="auto"; el.style.height=el.scrollHeight+"px"; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function hasData(key) { return !!(state.notes[key]?.trim() || state.photos[key]); }
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+
+function renderChecklist() {
+  const container = document.getElementById('cl-sections');
+  container.innerHTML = '';
+  CHECKLIST.forEach(sec => {
+    const total = sec.items.length;
+    const done  = sec.items.filter((_,i) => state.statuses[`${sec.id}-${i}`]==='terminado').length;
+    const pct   = Math.round(done/total*100);
+    const div   = document.createElement('div');
+    div.className = 'sec';
+    div.id = `sec-${sec.id}`;
+    div.innerHTML = `
+      <div class="sec-hdr" onclick="toggleSec(${sec.id})">
+        <span class="sec-ico">${sec.icon}</span>
+        <span class="sec-ttl">${sec.title}</span>
+        <span class="sec-cnt" id="sec-cnt-${sec.id}">${done}/${total}</span>
+        <div class="mini-bar"><div class="mini-fill" id="sec-bar-${sec.id}" style="width:${pct}%"></div></div>
+        <span class="chev ${sec.id===1?'open':''}" id="sec-chev-${sec.id}">▼</span>
+      </div>
+      <div class="sec-body ${sec.id===1?'open':''}" id="sec-body-${sec.id}">
+        ${sec.items.map((item,i) => renderItem(sec.id, i, item)).join('')}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  // textarea auto-resize + save
+  document.querySelectorAll('.obs-ta').forEach(ta => {
+    ta.addEventListener('input', function() {
+      const key = this.dataset.key;
+      state.notes[key] = this.value;
+      save(); autoResize(this);
+      updateItemMeta(key);
+    });
+    autoResize(ta);
+  });
+
+  // file inputs
+  document.querySelectorAll('.photo-input').forEach(inp => {
+    inp.addEventListener('change', function() {
+      const key = this.dataset.key;
+      const file = this.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => { state.photos[key]=e.target.result; save(); renderPhoto(key); updateItemMeta(key); };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  // restore saved photos
+  CHECKLIST.forEach(sec => sec.items.forEach((_,i) => { const k=`${sec.id}-${i}`; if(state.photos[k]) renderPhoto(k); }));
+
+  applyFilter(); updateClProgress();
+}
+
+function renderItem(secId, i, item) {
+  const key    = `${secId}-${i}`;
+  const status = state.statuses[key] || '';
+  const noteVal= state.notes[key]    || '';
+  const hd     = hasData(key);
+
+  const opts = STATUSES.map(s =>
+    `<option value="${s.val}" ${status===s.val?'selected':''}>${s.label}</option>`
+  ).join('');
+
+  return `
+    <div class="item-card" id="iw-${key}" data-key="${key}" data-status="${status}" data-has-data="${hd}">
+
+      <!-- Top row -->
+      <div class="item-top">
+        <select class="status-sel s-${status||'none'}" id="sel-${key}" data-key="${key}" onchange="updateStatus(this)">
+          ${opts}
+        </select>
+        <span class="item-txt ${status==='terminado'?'done':''}" id="itxt-${key}">${esc(item)}</span>
+      </div>
+
+      <!-- Always-visible detail row -->
+      <div class="item-detail">
+        <div class="obs-wrap">
+          <div class="detail-lbl">Observaciones / decisión</div>
+          <textarea class="obs-ta" data-key="${key}"
+            placeholder="Modelo, proveedor, color, medidas, pendientes…">${esc(noteVal)}</textarea>
+        </div>
+        <div class="photo-wrap">
+          <div class="detail-lbl">Foto</div>
+          <div class="photo-slot" id="pslot-${key}" onclick="triggerUpload('${key}')">
+            <input type="file" class="photo-input" data-key="${key}" accept="image/*">
+            <span class="upload-ico">📷</span>
+            <span class="upload-txt">Agregar foto</span>
+          </div>
+          <img class="photo-img" id="pimg-${key}" src="" alt="" onclick="openLightbox('${key}')">
+          <div class="photo-btns" id="pbtns-${key}">
+            <button class="pbtn" onclick="triggerUpload('${key}')">Cambiar</button>
+            <button class="pbtn del" onclick="deletePhoto('${key}')">Quitar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── INTERACTIONS ──────────────────────────────────────────────────────────────
+
+function updateStatus(sel) {
+  const key = sel.dataset.key; const val = sel.value; const secId = key.split('-')[0];
+  state.statuses[key] = val; save();
+  STATUSES.forEach(s => sel.classList.remove('s-'+(s.val||'none')));
+  sel.classList.add('s-'+(val||'none'));
+  document.getElementById(`itxt-${key}`)?.classList.toggle('done', val==='terminado');
+  const iw = document.getElementById(`iw-${key}`); if(iw) iw.dataset.status = val;
+  updateSecProgress(secId); updateClProgress(); applyFilter();
+}
+
+function updateItemMeta(key) {
+  const hd = hasData(key);
+  const iw = document.getElementById(`iw-${key}`); if(iw) iw.dataset.hasData = hd;
+  applyFilter();
+}
+
+function triggerUpload(key) { document.querySelector(`.photo-input[data-key="${key}"]`).click(); }
+
+function renderPhoto(key) {
+  const src   = state.photos[key]; if(!src) return;
+  const slot  = document.getElementById(`pslot-${key}`);
+  const img   = document.getElementById(`pimg-${key}`);
+  const btns  = document.getElementById(`pbtns-${key}`);
+  if(slot) slot.style.display='none';
+  if(img)  { img.src=src; img.classList.add('visible'); }
+  if(btns) btns.classList.add('visible');
+}
+
+function deletePhoto(key) {
+  delete state.photos[key]; save();
+  const slot = document.getElementById(`pslot-${key}`);
+  const img  = document.getElementById(`pimg-${key}`);
+  const btns = document.getElementById(`pbtns-${key}`);
+  if(slot) slot.style.display='';
+  if(img)  { img.src=''; img.classList.remove('visible'); }
+  if(btns) btns.classList.remove('visible');
+  updateItemMeta(key);
+}
+
+function openLightbox(key) {
+  const src = state.photos[key]; if(!src) return;
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightbox').addEventListener('click', closeLightbox);
+
+function toggleSec(id) {
+  const body = document.getElementById(`sec-body-${id}`);
+  const chev = document.getElementById(`sec-chev-${id}`);
+  body.classList.toggle('open');
+  chev.classList.toggle('open', body.classList.contains('open'));
+  if(body.classList.contains('open')) body.querySelectorAll('.obs-ta').forEach(ta=>autoResize(ta));
+}
+function expandAll()  { CHECKLIST.forEach(s=>{ document.getElementById(`sec-body-${s.id}`).classList.add('open'); document.getElementById(`sec-chev-${s.id}`).classList.add('open'); }); }
+function collapseAll(){ CHECKLIST.forEach(s=>{ document.getElementById(`sec-body-${s.id}`).classList.remove('open'); document.getElementById(`sec-chev-${s.id}`).classList.remove('open'); }); }
+
+function setFilter(f, btn) {
+  currentFilter=f;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); applyFilter();
+}
+function applyFilter() {
+  document.querySelectorAll('.item-card').forEach(iw => {
+    const s  = iw.dataset.status || '';
+    const hd = iw.dataset.hasData==='true';
+    let hide = false;
+    if(currentFilter==='none'      && s!=='')          hide=true;
+    if(currentFilter==='terminado' && s!=='terminado') hide=true;
+    if(currentFilter==='con-datos' && !hd)             hide=true;
+    iw.classList.toggle('hidden', hide);
+  });
+}
+
+function updateSecProgress(secId) {
+  const sec=CHECKLIST.find(s=>s.id==secId); if(!sec) return;
+  const total=sec.items.length;
+  const done=sec.items.filter((_,i)=>state.statuses[`${secId}-${i}`]==='terminado').length;
+  const pct=Math.round(done/total*100);
+  const cnt=document.getElementById(`sec-cnt-${secId}`); if(cnt) cnt.textContent=`${done}/${total}`;
+  const bar=document.getElementById(`sec-bar-${secId}`); if(bar) bar.style.width=`${pct}%`;
+}
+
+function updateClProgress() {
+  const total=CHECKLIST.reduce((a,s)=>a+s.items.length,0);
+  const counts={terminado:0,instalacion:0,en_sitio:0,produccion:0,porpagar:0,disenado:0,none:0};
+  CHECKLIST.forEach(sec=>sec.items.forEach((_,i)=>{
+    const s=state.statuses[`${sec.id}-${i}`]||'';
+    if(s==='terminado')    counts.terminado++;
+    else if(s==='instalacion') counts.instalacion++;
+    else if(s==='en_sitio')    counts.en_sitio++;
+    else if(s==='produccion')  counts.produccion++;
+    else if(s==='porpagar')    counts.porpagar++;
+    else if(s==='disenado')    counts.disenado++;
+    else                       counts.none++;
+  }));
+  const pct=Math.round(counts.terminado/total*100);
+  const circ=2*Math.PI*27;
+  document.getElementById('cl-ring').setAttribute('stroke-dashoffset', circ*(1-pct/100));
+  document.getElementById('cl-pct').textContent     = pct+'%';
+  document.getElementById('cl-done-txt').textContent = `${counts.terminado} de ${total} terminados`;
+  document.getElementById('cl-pend-txt').textContent = `${total-counts.terminado} elementos pendientes`;
+  document.getElementById('n-terminado').textContent  = counts.terminado;
+  document.getElementById('n-instalacion').textContent= counts.instalacion;
+  document.getElementById('n-en_sitio').textContent   = counts.en_sitio;
+  document.getElementById('n-produccion').textContent = counts.produccion;
+  document.getElementById('n-none').textContent       = counts.none;
+}
+
+load(); renderChecklist();
+</script>
+</body>
+</html>

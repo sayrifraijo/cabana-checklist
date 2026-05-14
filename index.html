@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cabaña — Checklist de Diseño</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#f5f1eb; --bg2:#eee9e1; --bg3:#e8e2d8; --bg4:#ffffff;
+    --border:#d8d0c4; --border2:#c8bfb0;
+    --accent:#8a6a40; --accent2:#b08850;
+    --text:#2a2018; --text2:#4a3a28; --text3:#8a7a68; --text4:#b0a090;
+    --shadow:0 1px 4px rgba(80,60,30,.09);
+    --shadow2:0 2px 12px rgba(80,60,30,.12);
+    --s-none:#f0ece6;       --sc-none:#9a8a78;       --sb-none:#cfc5b8;
+    --s-disenado:#ddeaf8;   --sc-disenado:#2e6aaa;   --sb-disenado:#80aedd;
+    --s-porpagar:#fff0d8;   --sc-porpagar:#a06010;   --sb-porpagar:#d4a040;
+    --s-produccion:#fde8c8; --sc-produccion:#b05010; --sb-produccion:#e09040;
+    --s-en_sitio:#edf4ff;   --sc-en_sitio:#2050a0;   --sb-en_sitio:#6090d8;
+    --s-instalacion:#f0e8ff;--sc-instalacion:#6030a0;--sb-instalacion:#a070d0;
+    --s-terminado:#d8f4e4;  --sc-terminado:#1a7a40;  --sb-terminado:#48c880;
+  }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:var(--text); font-family:'Source Sans 3',sans-serif; min-height:100vh; font-size:14px; }
+  .wrap { max-width:860px; margin:0 auto; padding:40px 20px 100px; }
+
+  /* Header */
+  .hdr { text-align:center; margin-bottom:28px; padding-bottom:22px; border-bottom:2px solid var(--border); }
+  .hdr-eye { font-size:10px; font-weight:600; letter-spacing:5px; text-transform:uppercase; color:var(--accent2); margin-bottom:7px; }
+  .hdr-title { font-family:'Playfair Display',serif; font-size:36px; font-weight:700; color:var(--text); }
+  .hdr-sub { font-size:12px; color:var(--text3); margin-top:4px; }
+
+  /* Progress */
+  .prog-card { background:var(--bg4); border:1px solid var(--border); border-radius:14px; padding:20px 24px; margin-bottom:18px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; box-shadow:var(--shadow2); }
+  .ring-wrap { position:relative; width:66px; height:66px; flex-shrink:0; }
+  .ring-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--accent); }
+  .prog-main { flex:1; min-width:130px; }
+  .prog-main h3 { font-family:'Playfair Display',serif; font-size:16px; color:var(--text); margin-bottom:2px; }
+  .prog-main p { font-size:11px; color:var(--text3); }
+  .prog-stats { display:flex; gap:14px; border-left:2px solid var(--border); padding-left:18px; flex-wrap:wrap; }
+  .stat { text-align:center; }
+  .stat-n { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--accent); }
+  .stat-l { font-size:9px; color:var(--text4); letter-spacing:1px; text-transform:uppercase; margin-top:1px; }
+
+  /* Legend */
+  .status-legend { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .leg-pill { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--text3); padding:3px 9px; border-radius:12px; background:var(--bg4); border:1px solid var(--border); }
+  .leg-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+  /* Filters */
+  .ctrls { display:flex; gap:7px; margin-bottom:16px; align-items:center; flex-wrap:wrap; }
+  .fbtn { background:var(--bg4); border:1px solid var(--border); color:var(--text3); padding:5px 13px; border-radius:20px; font-size:11px; cursor:pointer; transition:all 0.2s; font-family:'Source Sans 3',sans-serif; box-shadow:var(--shadow); }
+  .fbtn:hover { border-color:var(--accent2); color:var(--accent); }
+  .fbtn.on { border-color:var(--accent); color:var(--accent); background:#f8f0e4; font-weight:600; }
+  .tbtn { background:none; border:none; color:var(--text4); font-size:11px; cursor:pointer; padding:4px 6px; text-decoration:underline; font-family:'Source Sans 3',sans-serif; transition:color 0.2s; }
+  .tbtn:hover { color:var(--accent); }
+  .ctrls-right { margin-left:auto; display:flex; gap:6px; }
+
+  /* Add section button */
+  .add-section-btn {
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg4); border:2px dashed var(--border2);
+    color:var(--text3); padding:12px 18px; border-radius:12px;
+    cursor:pointer; font-family:'Source Sans 3',sans-serif; font-size:13px;
+    transition:all 0.2s; width:100%; margin-top:4px; box-shadow:var(--shadow);
+  }
+  .add-section-btn:hover { border-color:var(--accent2); color:var(--accent); background:#fdf8f0; }
+  .add-section-btn span { font-size:18px; color:var(--accent2); }
+
+  /* Section */
+  .sec { margin-bottom:10px; border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:var(--shadow); }
+  .sec-hdr { display:flex; align-items:center; padding:13px 16px; background:var(--bg2); gap:10px; user-select:none; }
+  .sec-hdr-left { display:flex; align-items:center; gap:10px; flex:1; cursor:pointer; }
+  .sec-ico { font-size:13px; color:var(--accent2); width:16px; text-align:center; flex-shrink:0; }
+  .sec-ttl-input {
+    font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:var(--text);
+    background:transparent; border:none; outline:none; flex:1;
+    border-bottom:1px dashed transparent; transition:border-color 0.2s;
+    cursor:text;
+  }
+  .sec-ttl-input:hover { border-bottom-color:var(--border2); }
+  .sec-ttl-input:focus { border-bottom-color:var(--accent2); background:#fdf8f0; border-radius:4px; padding:1px 4px; }
+  .sec-cnt { font-size:10px; color:var(--text3); white-space:nowrap; flex-shrink:0; }
+  .mini-bar { width:44px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; flex-shrink:0; }
+  .mini-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; transition:width 0.4s; }
+  .chev { font-size:9px; color:var(--text4); transition:transform 0.25s; flex-shrink:0; cursor:pointer; }
+  .chev.open { transform:rotate(180deg); }
+
+
+  .sec-body { background:var(--bg4); display:none; }
+  .sec-body.open { display:block; }
+
+  /* Item card */
+  .item-card { border-bottom:1px solid var(--bg2); }
+  .item-card:last-of-type { border-bottom:none; }
+  .item-card.hidden { display:none !important; }
+
+  .item-top { display:flex; align-items:flex-start; padding:11px 14px 8px; gap:10px; transition:background 0.15s; }
+  .item-top:hover { background:#faf7f3; }
+
+  /* Status */
+  .status-sel { flex-shrink:0; border:none; outline:none; cursor:pointer; font-family:'Source Sans 3',sans-serif; font-size:10px; font-weight:600; padding:4px 9px; border-radius:12px; transition:all 0.2s; appearance:none; -webkit-appearance:none; min-width:116px; text-align:center; margin-top:2px; letter-spacing:0.3px; }
+  .status-sel.s-none        { background:var(--s-none);        color:var(--sc-none);        border:1.5px solid var(--sb-none); }
+  .status-sel.s-disenado    { background:var(--s-disenado);    color:var(--sc-disenado);    border:1.5px solid var(--sb-disenado); }
+  .status-sel.s-porpagar    { background:var(--s-porpagar);    color:var(--sc-porpagar);    border:1.5px solid var(--sb-porpagar); }
+  .status-sel.s-produccion  { background:var(--s-produccion);  color:var(--sc-produccion);  border:1.5px solid var(--sb-produccion); }
+  .status-sel.s-en_sitio    { background:var(--s-en_sitio);    color:var(--sc-en_sitio);    border:1.5px solid var(--sb-en_sitio); }
+  .status-sel.s-instalacion { background:var(--s-instalacion); color:var(--sc-instalacion); border:1.5px solid var(--sb-instalacion); }
+  .status-sel.s-terminado   { background:var(--s-terminado);   color:var(--sc-terminado);   border:1.5px solid var(--sb-terminado); }
+
+  /* Item label editable */
+  .item-lbl-input {
+    flex:1; background:transparent; border:none; outline:none;
+    font-size:13.5px; color:var(--text2); font-family:'Source Sans 3',sans-serif;
+    font-weight:400; line-height:1.45; padding-top:3px;
+    border-bottom:1px dashed transparent; transition:all 0.2s; cursor:text;
+  }
+  .item-lbl-input:hover { border-bottom-color:var(--border2); }
+  .item-lbl-input:focus { border-bottom-color:var(--accent2); background:#fdf8f0; border-radius:4px; padding:2px 6px; }
+  .item-lbl-input.done { color:var(--text4); text-decoration:line-through; }
+
+  /* Delete item btn */
+  .item-del-btn { background:none; border:none; color:var(--text4); font-size:15px; cursor:pointer; padding:2px 4px; border-radius:4px; flex-shrink:0; transition:all 0.2s; line-height:1; margin-top:2px; }
+  .item-del-btn:hover { color:#c03030; background:#fff0f0; }
+
+  /* Detail row */
+  .item-detail { display:flex; gap:12px; padding:0 14px 12px 14px; align-items:flex-start; flex-wrap:wrap; }
+  .obs-wrap { flex:1; min-width:200px; }
+  .detail-lbl { font-size:9px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--text4); margin-bottom:4px; }
+  .obs-ta { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text2); font-size:12.5px; font-family:'Source Sans 3',sans-serif; font-weight:300; padding:7px 10px; resize:none; outline:none; line-height:1.5; min-height:36px; overflow:hidden; transition:border-color 0.2s,background 0.2s; }
+  .obs-ta::placeholder { color:var(--text4); font-style:italic; }
+  .obs-ta:focus { border-color:var(--accent2); background:var(--bg4); }
+
+  /* Photo */
+  .photo-wrap { flex-shrink:0; width:118px; }
+  .photo-slot { width:118px; height:86px; border:2px dashed var(--border2); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; transition:all 0.2s; background:var(--bg); position:relative; overflow:hidden; }
+  .photo-slot:hover { border-color:var(--accent2); background:#fdf8f0; }
+  .photo-slot input[type=file] { display:none; }
+  .upload-ico { font-size:18px; color:var(--text4); }
+  .upload-txt { font-size:9px; color:var(--text4); text-align:center; line-height:1.3; }
+  .photo-img { width:118px; height:86px; object-fit:cover; border-radius:8px; display:none; cursor:pointer; }
+  .photo-img.visible { display:block; }
+  .photo-btns { display:none; gap:4px; margin-top:4px; }
+  .photo-btns.visible { display:flex; }
+  .pbtn { flex:1; background:none; border:1px solid var(--border); color:var(--text3); font-size:9px; padding:2px 6px; border-radius:5px; cursor:pointer; font-family:'Source Sans 3',sans-serif; transition:all 0.2s; text-align:center; }
+  .pbtn:hover { border-color:var(--accent2); color:var(--accent); }
+  .pbtn.del:hover { border-color:#d04040; color:#b02020; }
+
+  /* Add item button inside section */
+  .add-item-row { display:flex; align-items:center; padding:9px 14px; border-top:1px dashed var(--border); }
+  .add-item-btn { display:flex; align-items:center; gap:6px; background:none; border:none; color:var(--text3); font-size:12px; cursor:pointer; font-family:'Source Sans 3',sans-serif; transition:color 0.2s; padding:3px 0; }
+  .add-item-btn:hover { color:var(--accent); }
+  .add-item-btn span { font-size:16px; color:var(--accent2); }
+
+  /* Lightbox */
+  .lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:1000; align-items:center; justify-content:center; }
+  .lightbox.open { display:flex; }
+  .lightbox img { max-width:90vw; max-height:90vh; border-radius:8px; box-shadow:0 8px 40px rgba(0,0,0,.5); }
+  .lightbox-close { position:absolute; top:20px; right:28px; color:white; font-size:32px; cursor:pointer; opacity:.8; line-height:1; }
+  .lightbox-close:hover { opacity:1; }
+
+  /* Confirm modal */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:900; align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--bg4); border-radius:14px; padding:28px 28px 22px; max-width:340px; width:90%; box-shadow:0 8px 40px rgba(0,0,0,.2); }
+  .modal h3 { font-family:'Playfair Display',serif; font-size:18px; color:var(--text); margin-bottom:8px; }
+  .modal p { font-size:13px; color:var(--text3); margin-bottom:20px; line-height:1.5; }
+  .modal-btns { display:flex; gap:10px; justify-content:flex-end; }
+  .modal-cancel { background:none; border:1px solid var(--border); color:var(--text3); padding:8px 16px; border-radius:8px; cursor:pointer; font-family:'Source Sans 3',sans-serif; font-size:13px; transition:all 0.2s; }
+  .modal-cancel:hover { border-color:var(--border2); color:var(--text); }
+  .modal-confirm { background:#b03030; border:none; color:white; padding:8px 16px; border-radius:8px; cursor:pointer; font-family:'Source Sans 3',sans-serif; font-size:13px; font-weight:600; transition:all 0.2s; }
+  .modal-confirm:hover { background:#8a2020; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <p class="hdr-eye">Diseño de Interiores</p>
+    <h1 class="hdr-title">Cabaña</h1>
+    <p class="hdr-sub">Control de avance y decisiones de proyecto</p>
+  </div>
+
+  <div class="prog-card">
+    <div class="ring-wrap">
+      <svg width="66" height="66" style="transform:rotate(-90deg)">
+        <circle cx="33" cy="33" r="27" fill="none" stroke="#e0d8cc" stroke-width="4.5"/>
+        <circle id="cl-ring" cx="33" cy="33" r="27" fill="none" stroke="#b08850" stroke-width="4.5"
+          stroke-dasharray="169.6" stroke-dashoffset="169.6" stroke-linecap="round"
+          style="transition:stroke-dashoffset 0.5s ease"/>
+      </svg>
+      <div class="ring-pct" id="cl-pct">0%</div>
+    </div>
+    <div class="prog-main">
+      <h3 id="cl-done-txt">Cargando…</h3>
+      <p id="cl-pend-txt"></p>
+    </div>
+    <div class="prog-stats">
+      <div class="stat"><div class="stat-n" id="n-terminado">0</div><div class="stat-l">Terminados</div></div>
+      <div class="stat"><div class="stat-n" id="n-instalacion">0</div><div class="stat-l">Instalando</div></div>
+      <div class="stat"><div class="stat-n" id="n-en_sitio">0</div><div class="stat-l">En sitio</div></div>
+      <div class="stat"><div class="stat-n" id="n-produccion">0</div><div class="stat-l">En prod.</div></div>
+      <div class="stat"><div class="stat-n" id="n-none">0</div><div class="stat-l">Sin iniciar</div></div>
+    </div>
+  </div>
+
+  <div class="status-legend">
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-none)"></div>Sin definir</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-disenado)"></div>Diseñado</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-porpagar)"></div>Por pagar</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-produccion)"></div>En producción</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-en_sitio)"></div>En sitio</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-instalacion)"></div>En instalación</div>
+    <div class="leg-pill"><div class="leg-dot" style="background:var(--sb-terminado)"></div>Terminado</div>
+  </div>
+
+  <div class="ctrls">
+    <button class="fbtn on"  onclick="setFilter('all',this)">Todos</button>
+    <button class="fbtn" onclick="setFilter('none',this)">Sin definir</button>
+    <button class="fbtn" onclick="setFilter('terminado',this)">Terminados</button>
+    <button class="fbtn" onclick="setFilter('con-datos',this)">Con datos</button>
+    <div class="ctrls-right">
+      <button class="tbtn" onclick="expandAll()">Expandir todo</button>
+      <button class="tbtn" onclick="collapseAll()">Contraer</button>
+    </div>
+  </div>
+
+  <div id="cl-sections"></div>
+
+  <button class="add-section-btn" onclick="addSection()">
+    <span>＋</span> Agregar nueva categoría
+  </button>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close">×</span>
+  <img id="lightbox-img" src="" alt="Foto">
+</div>
+
+<!-- Confirm modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">¿Eliminar?</h3>
+    <p id="modal-msg">Esta acción no se puede deshacer.</p>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="modal-confirm" id="modal-confirm-btn">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── ICONS PER SECTION ────────────────────────────────────────────────────────
+const ICONS = ["⬢","◎","◆","◉","▣","◈","✦","▦","⬡","◐","◑","◒"];
+
+// ─── DEFAULT DATA ─────────────────────────────────────────────────────────────
+const DEFAULT_SECTIONS = [
+  { id:"s1", icon:"⬢", title:"Carpintería", items:[
+    {id:"s1i0",label:"Puertas de área"},{id:"s1i1",label:"Herrajes y jaladeras de puertas"},
+    {id:"s1i2",label:"Cocina"},{id:"s1i3",label:"Herrajes y jaladeras de cocina"},
+    {id:"s1i4",label:"Closet principal"},{id:"s1i5",label:"Herrajes y jaladeras de closet principal"},
+    {id:"s1i6",label:"Mueble de baño principal"},{id:"s1i7",label:"Herrajes y jaladeras de mueble de baño principal"},
+    {id:"s1i8",label:"Alacena y pantry"},{id:"s1i9",label:"Herrajes y jaladeras de pantry"},
+    {id:"s1i10",label:"Lavandería"},{id:"s1i11",label:"Herrajes y jaladeras de lavandería"},
+    {id:"s1i12",label:"Mueble de medio baño"},{id:"s1i13",label:"Herrajes y jaladeras de medio baño"},
+    {id:"s1i14",label:"Closet de recámara de visitas"},{id:"s1i15",label:"Cocineta recámara de visitas"},
+    {id:"s1i16",label:"Escritorio de oratorio"},{id:"s1i17",label:"Librero oratorio"},
+    {id:"s1i18",label:"Closet de cuarto de servicio"},
+  ]},
+  { id:"s2", icon:"◎", title:"Baños", items:[
+    {id:"s2i0",label:"Lavabo baño principal"},{id:"s2i1",label:"Lavabo medio baño"},
+    {id:"s2i2",label:"Lavabo baño de visitas"},{id:"s2i3",label:"Lavabo baño de servicio"},
+    {id:"s2i4",label:"WCs"},{id:"s2i5",label:"Regaderas y mezcladoras baño principal"},
+    {id:"s2i6",label:"Mezcladoras medio baño"},{id:"s2i7",label:"Regaderas y mezcladoras baño de visitas"},
+    {id:"s2i8",label:"Regaderas y mezcladoras baño de servicio"},
+    {id:"s2i9",label:"Espejo baño principal"},{id:"s2i10",label:"Espejo baño de visitas"},
+    {id:"s2i11",label:"Espejo baño de servicio"},{id:"s2i12",label:"Accesorios: toallero, portapapel, ganchos"},
+    {id:"s2i13",label:"Cancelería de baño principal"},{id:"s2i14",label:"Cancelería de baño de visitas"},
+    {id:"s2i15",label:"Cancelería de baño de servicio"},
+  ]},
+  { id:"s3", icon:"◆", title:"Granito / Cubiertas / Piedra", items:[
+    {id:"s3i0",label:"Cubierta terraza"},{id:"s3i1",label:"Cubierta cocina vino"},
+    {id:"s3i2",label:"Cubierta cocina isla"},{id:"s3i3",label:"Salpicadera cocina"},
+    {id:"s3i4",label:"Cubierta baño principal"},{id:"s3i5",label:"Cubierta medio baño"},
+  ]},
+  { id:"s4", icon:"◉", title:"Iluminación Especial", items:[
+    {id:"s4i0",label:"Luminaria central sala"},{id:"s4i1",label:"Luminaria central comedor"},
+    {id:"s4i2",label:"Luminaria central cocina"},{id:"s4i3",label:"Luminaria arbotante cocina"},
+    {id:"s4i4",label:"Luminaria central recámara principal"},
+    {id:"s4i5",label:"Luminaria central recámara de visitas"},
+    {id:"s4i6",label:"Spots"},{id:"s4i7",label:"Apagadores inteligentes"},{id:"s4i8",label:"Postes terraza"},
+  ]},
+  { id:"s5", icon:"▣", title:"Mobiliario", items:[
+    {id:"s5i0",label:"Sala — Sillón"},{id:"s5i1",label:"Sala — Mesa de centro"},{id:"s5i2",label:"Sala — Mesa lateral"},
+    {id:"s5i3",label:"Cocina — Bancos"},{id:"s5i4",label:"Comedor — Mesa"},{id:"s5i5",label:"Comedor — Sillas"},
+    {id:"s5i6",label:"Rec. Principal — Cama"},{id:"s5i7",label:"Rec. Principal — Burós"},
+    {id:"s5i8",label:"Rec. Principal — Desayunador"},{id:"s5i9",label:"Rec. Principal — Sillas desayunador"},
+    {id:"s5i10",label:"Rec. Principal — Sillón reclinable"},{id:"s5i11",label:"Rec. Principal — Asiento closet"},
+    {id:"s5i12",label:"Rec. Principal — Silla oratorio"},{id:"s5i13",label:"Rec. Principal — Silla escritorio"},
+    {id:"s5i14",label:"Rec. Visitas — Cama"},{id:"s5i15",label:"Rec. Visitas — Burós"},
+    {id:"s5i16",label:"Rec. Visitas — Sillón"},{id:"s5i17",label:"Rec. Servicio — Cama"},
+    {id:"s5i18",label:"Rec. Servicio — Buró"},{id:"s5i19",label:"Terraza — Mesa"},{id:"s5i20",label:"Terraza — Sillas"},
+  ]},
+  { id:"s6", icon:"◈", title:"Textiles y Ambientación", items:[
+    {id:"s6i0",label:"Cortinas / persianas"},{id:"s6i1",label:"Cuadros / arte / accesorios"},
+    {id:"s6i2",label:"Plantas naturales o artificiales"},{id:"s6i3",label:"Objetos decorativos clave"},
+    {id:"s6i4",label:"Espejos decorativos"},{id:"s6i5",label:"Mantas / texturas"},{id:"s6i6",label:"Cojines terraza"},
+  ]},
+  { id:"s7", icon:"✦", title:"Detalles Finales", items:[
+    {id:"s7i0",label:"Topes de puerta"},{id:"s7i1",label:"Tapas de registros visibles"},
+    {id:"s7i2",label:"Sellos y siliconas en color correcto"},{id:"s7i3",label:"Remates de pintura"},
+    {id:"s7i4",label:"Asador"},
+  ]},
+];
+
+const STATUSES = [
+  {val:"",label:"Sin definir"},{val:"disenado",label:"Diseñado"},{val:"porpagar",label:"Por pagar"},
+  {val:"produccion",label:"En producción"},{val:"en_sitio",label:"En sitio"},
+  {val:"instalacion",label:"En instalación"},{val:"terminado",label:"Terminado"},
+];
+
+const KEY = "cabana_v7";
+let sections = [];
+let state    = { statuses:{}, notes:{}, photos:{} };
+let currentFilter = "all";
+let modalCallback = null;
+
+// ─── PERSISTENCE ──────────────────────────────────────────────────────────────
+function load() {
+  try {
+    const p = JSON.parse(localStorage.getItem(KEY)||'{}');
+    sections        = p.sections  || JSON.parse(JSON.stringify(DEFAULT_SECTIONS));
+    state.statuses  = p.statuses  || {};
+    state.notes     = p.notes     || {};
+    state.photos    = p.photos    || {};
+  } catch {
+    sections = JSON.parse(JSON.stringify(DEFAULT_SECTIONS));
+  }
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify({ sections, ...state })); } catch {}
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function uid() { return 'x'+Math.random().toString(36).slice(2,8); }
+function autoResize(el) { if(!el) return; el.style.height="auto"; el.style.height=el.scrollHeight+"px"; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function hasData(key) { return !!(state.notes[key]?.trim() || state.photos[key]); }
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function showModal(title, msg, onConfirm) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-msg').textContent   = msg;
+  modalCallback = onConfirm;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); modalCallback=null; }
+document.getElementById('modal-confirm-btn').onclick = () => { if(modalCallback) modalCallback(); closeModal(); };
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function renderAll() {
+  const container = document.getElementById('cl-sections');
+  container.innerHTML = '';
+  sections.forEach(sec => renderSection(sec, container));
+  applyFilter();
+  updateClProgress();
+}
+
+function renderSection(sec, container) {
+  const total = sec.items.length;
+  const done  = sec.items.filter(it => state.statuses[it.id]==='terminado').length;
+  const pct   = total ? Math.round(done/total*100) : 0;
+
+  const div = document.createElement('div');
+  div.className = 'sec';
+  div.id = `sec-${sec.id}`;
+  div.innerHTML = `
+    <div class="sec-hdr">
+      <div class="sec-hdr-left" onclick="toggleSec('${sec.id}')">
+        <span class="sec-ico">${sec.icon}</span>
+        <input class="sec-ttl-input" value="${esc(sec.title)}"
+          data-sid="${sec.id}"
+          onchange="renameSection(this)"
+          onclick="event.stopPropagation()"
+          placeholder="Nombre de categoría">
+        <span class="sec-cnt" id="sec-cnt-${sec.id}">${done}/${total}</span>
+        <div class="mini-bar"><div class="mini-fill" id="sec-bar-${sec.id}" style="width:${pct}%"></div></div>
+      </div>
+      <span class="chev open" id="sec-chev-${sec.id}" onclick="toggleSec('${sec.id}')">▼</span>
+
+    </div>
+    <div class="sec-body open" id="sec-body-${sec.id}">
+      <div id="items-${sec.id}">
+        ${sec.items.map(it => renderItemHTML(it.id, it.label)).join('')}
+      </div>
+      <div class="add-item-row">
+        <button class="add-item-btn" onclick="addItem('${sec.id}')">
+          <span>＋</span> Agregar elemento
+        </button>
+      </div>
+    </div>
+  `;
+  (container || document.getElementById('cl-sections')).appendChild(div);
+
+  // attach listeners for this section's textareas and file inputs
+  attachListeners(sec.id);
+
+  // restore photos
+  sec.items.forEach(it => { if(state.photos[it.id]) renderPhoto(it.id); });
+}
+
+function renderItemHTML(key, label) {
+  const status = state.statuses[key] || '';
+  const noteVal= state.notes[key]    || '';
+  const opts   = STATUSES.map(s =>
+    `<option value="${s.val}" ${status===s.val?'selected':''}>${s.label}</option>`
+  ).join('');
+  return `
+    <div class="item-card" id="iw-${key}" data-key="${key}" data-status="${status}" data-has-data="${hasData(key)}">
+      <div class="item-top">
+        <select class="status-sel s-${status||'none'}" id="sel-${key}" data-key="${key}" onchange="updateStatus(this)">
+          ${opts}
+        </select>
+        <input class="item-lbl-input ${status==='terminado'?'done':''}" id="lbl-${key}"
+          value="${esc(label)}" data-key="${key}" onchange="renameItem(this)"
+          placeholder="Nombre del elemento">
+        <button class="item-del-btn" onclick="confirmDeleteItem('${key}')" title="Eliminar">✕</button>
+      </div>
+      <div class="item-detail">
+        <div class="obs-wrap">
+          <div class="detail-lbl">Observaciones / decisión</div>
+          <textarea class="obs-ta" data-key="${key}"
+            placeholder="Modelo, proveedor, color, medidas, pendientes…">${esc(noteVal)}</textarea>
+        </div>
+        <div class="photo-wrap">
+          <div class="detail-lbl">Foto</div>
+          <div class="photo-slot" id="pslot-${key}" onclick="triggerUpload('${key}')">
+            <input type="file" class="photo-input" data-key="${key}" accept="image/*">
+            <span class="upload-ico">📷</span>
+            <span class="upload-txt">Agregar foto</span>
+          </div>
+          <img class="photo-img" id="pimg-${key}" src="" alt="" onclick="openLightbox('${key}')">
+          <div class="photo-btns" id="pbtns-${key}">
+            <button class="pbtn" onclick="triggerUpload('${key}')">Cambiar</button>
+            <button class="pbtn del" onclick="deletePhoto('${key}')">Quitar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function attachListeners(secId) {
+  const body = document.getElementById(`sec-body-${secId}`);
+  if (!body) return;
+  body.querySelectorAll('.obs-ta').forEach(ta => {
+    ta.addEventListener('input', function() {
+      const key = this.dataset.key;
+      state.notes[key] = this.value; save(); autoResize(this);
+      const iw = document.getElementById(`iw-${key}`);
+      if(iw) iw.dataset.hasData = hasData(key);
+      applyFilter();
+    });
+    autoResize(ta);
+  });
+  body.querySelectorAll('.photo-input').forEach(inp => {
+    inp.addEventListener('change', function() {
+      const key = this.dataset.key; const file = this.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        state.photos[key]=e.target.result; save(); renderPhoto(key);
+        const iw=document.getElementById(`iw-${key}`); if(iw) iw.dataset.hasData=true;
+        applyFilter();
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+}
+
+// ─── SECTION ACTIONS ──────────────────────────────────────────────────────────
+function addSection() {
+  const id   = uid();
+  const icon = ICONS[sections.length % ICONS.length];
+  const sec  = { id, icon, title:"Nueva categoría", items:[] };
+  sections.push(sec);
+  save();
+  const container = document.getElementById('cl-sections');
+  renderSection(sec, container);
+  // focus title
+  setTimeout(() => {
+    const inp = document.querySelector(`input[data-sid="${id}"]`);
+    if(inp) { inp.focus(); inp.select(); }
+  }, 50);
+  updateClProgress();
+}
+
+function renameSection(inp) {
+  const sid = inp.dataset.sid;
+  const sec = sections.find(s=>s.id===sid);
+  if(sec) { sec.title = inp.value; save(); }
+}
+
+
+
+function toggleSec(id) {
+  const body=document.getElementById(`sec-body-${id}`);
+  const chev=document.getElementById(`sec-chev-${id}`);
+  body.classList.toggle('open');
+  chev.classList.toggle('open', body.classList.contains('open'));
+  if(body.classList.contains('open')) body.querySelectorAll('.obs-ta').forEach(ta=>autoResize(ta));
+}
+function expandAll()  { sections.forEach(s=>{ document.getElementById(`sec-body-${s.id}`)?.classList.add('open'); document.getElementById(`sec-chev-${s.id}`)?.classList.add('open'); }); }
+function collapseAll(){ sections.forEach(s=>{ document.getElementById(`sec-body-${s.id}`)?.classList.remove('open'); document.getElementById(`sec-chev-${s.id}`)?.classList.remove('open'); }); }
+
+// ─── ITEM ACTIONS ─────────────────────────────────────────────────────────────
+function addItem(secId) {
+  const sec = sections.find(s=>s.id===secId); if(!sec) return;
+  const id  = uid();
+  sec.items.push({ id, label:"Nuevo elemento" });
+  save();
+  const itemsContainer = document.getElementById(`items-${secId}`);
+  itemsContainer.insertAdjacentHTML('beforeend', renderItemHTML(id, "Nuevo elemento"));
+  attachListeners(secId);
+  // focus label
+  setTimeout(() => {
+    const inp = document.getElementById(`lbl-${id}`);
+    if(inp) { inp.focus(); inp.select(); }
+  }, 30);
+  updateSecProgress(secId);
+  updateClProgress();
+}
+
+function renameItem(inp) {
+  const key = inp.dataset.key;
+  // find and update in sections
+  for(const sec of sections) {
+    const it = sec.items.find(i=>i.id===key);
+    if(it) { it.label=inp.value; save(); break; }
+  }
+}
+
+function confirmDeleteItem(key) {
+  const lbl = document.getElementById(`lbl-${key}`)?.value || 'este elemento';
+  showModal('Eliminar elemento', `¿Eliminar "${lbl}"? Esta acción no se puede deshacer.`, () => deleteItem(key));
+}
+function deleteItem(key) {
+  for(const sec of sections) {
+    const idx = sec.items.findIndex(i=>i.id===key);
+    if(idx!==-1) {
+      sec.items.splice(idx,1);
+      delete state.statuses[key]; delete state.notes[key]; delete state.photos[key];
+      save();
+      document.getElementById(`iw-${key}`)?.remove();
+      updateSecProgress(sec.id);
+      updateClProgress();
+      break;
+    }
+  }
+}
+
+// ─── STATUS ───────────────────────────────────────────────────────────────────
+function updateStatus(sel) {
+  const key=sel.dataset.key; const val=sel.value;
+  let secId=null;
+  for(const sec of sections) { if(sec.items.find(i=>i.id===key)){ secId=sec.id; break; } }
+  state.statuses[key]=val; save();
+  STATUSES.forEach(s=>sel.classList.remove('s-'+(s.val||'none')));
+  sel.classList.add('s-'+(val||'none'));
+  const lbl=document.getElementById(`lbl-${key}`); if(lbl) lbl.classList.toggle('done',val==='terminado');
+  const iw=document.getElementById(`iw-${key}`); if(iw) iw.dataset.status=val;
+  if(secId) updateSecProgress(secId);
+  updateClProgress(); applyFilter();
+}
+
+// ─── PHOTOS ───────────────────────────────────────────────────────────────────
+function triggerUpload(key) { document.querySelector(`.photo-input[data-key="${key}"]`)?.click(); }
+function renderPhoto(key) {
+  const src=state.photos[key]; if(!src) return;
+  const slot=document.getElementById(`pslot-${key}`);
+  const img=document.getElementById(`pimg-${key}`);
+  const btns=document.getElementById(`pbtns-${key}`);
+  if(slot) slot.style.display='none';
+  if(img)  { img.src=src; img.classList.add('visible'); }
+  if(btns) btns.classList.add('visible');
+}
+function deletePhoto(key) {
+  delete state.photos[key]; save();
+  const slot=document.getElementById(`pslot-${key}`);
+  const img=document.getElementById(`pimg-${key}`);
+  const btns=document.getElementById(`pbtns-${key}`);
+  if(slot) slot.style.display='';
+  if(img)  { img.src=''; img.classList.remove('visible'); }
+  if(btns) btns.classList.remove('visible');
+  const iw=document.getElementById(`iw-${key}`); if(iw) iw.dataset.hasData=hasData(key);
+  applyFilter();
+}
+function openLightbox(key) {
+  const src=state.photos[key]; if(!src) return;
+  document.getElementById('lightbox-img').src=src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightbox').addEventListener('click', closeLightbox);
+
+// ─── FILTER ───────────────────────────────────────────────────────────────────
+function setFilter(f,btn) {
+  currentFilter=f;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); applyFilter();
+}
+function applyFilter() {
+  document.querySelectorAll('.item-card').forEach(iw => {
+    const s=iw.dataset.status||''; const hd=iw.dataset.hasData==='true';
+    let hide=false;
+    if(currentFilter==='none'      && s!=='')          hide=true;
+    if(currentFilter==='terminado' && s!=='terminado') hide=true;
+    if(currentFilter==='con-datos' && !hd)             hide=true;
+    iw.classList.toggle('hidden',hide);
+  });
+}
+
+// ─── PROGRESS ─────────────────────────────────────────────────────────────────
+function updateSecProgress(secId) {
+  const sec=sections.find(s=>s.id===secId); if(!sec) return;
+  const total=sec.items.length;
+  const done=sec.items.filter(it=>state.statuses[it.id]==='terminado').length;
+  const pct=total?Math.round(done/total*100):0;
+  const cnt=document.getElementById(`sec-cnt-${secId}`); if(cnt) cnt.textContent=`${done}/${total}`;
+  const bar=document.getElementById(`sec-bar-${secId}`); if(bar) bar.style.width=`${pct}%`;
+}
+function updateClProgress() {
+  const allItems=sections.flatMap(s=>s.items);
+  const total=allItems.length;
+  const counts={terminado:0,instalacion:0,en_sitio:0,produccion:0,none:0};
+  allItems.forEach(it=>{
+    const s=state.statuses[it.id]||'';
+    if(s==='terminado')    counts.terminado++;
+    else if(s==='instalacion') counts.instalacion++;
+    else if(s==='en_sitio')    counts.en_sitio++;
+    else if(s==='produccion')  counts.produccion++;
+    else if(!s)                counts.none++;
+  });
+  const pct=total?Math.round(counts.terminado/total*100):0;
+  const circ=2*Math.PI*27;
+  document.getElementById('cl-ring').setAttribute('stroke-dashoffset',circ*(1-pct/100));
+  document.getElementById('cl-pct').textContent      = pct+'%';
+  document.getElementById('cl-done-txt').textContent  = `${counts.terminado} de ${total} terminados`;
+  document.getElementById('cl-pend-txt').textContent  = `${total-counts.terminado} elementos pendientes`;
+  document.getElementById('n-terminado').textContent   = counts.terminado;
+  document.getElementById('n-instalacion').textContent = counts.instalacion;
+  document.getElementById('n-en_sitio').textContent    = counts.en_sitio;
+  document.getElementById('n-produccion').textContent  = counts.produccion;
+  document.getElementById('n-none').textContent        = counts.none;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+load();
+renderAll();
+</script>
+</body>
+</html>
